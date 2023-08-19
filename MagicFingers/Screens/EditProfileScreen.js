@@ -13,28 +13,28 @@ import { FontAwesome } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { updateProfile } from "../BackEnd/Firebase";
-import {
-  userEmail,
-  userName,
-  userProfileImage,
-  userPassword,
-} from "../BackEnd/Firebase";
-import { AntDesign } from "@expo/vector-icons";
+import { updateProfile, auth, db } from "../BackEnd/Firebase";
+import { getDoc, doc } from "firebase/firestore";
 
 export default function EditProfileScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [profileImage, setProfileImage] = useState(null);
-  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState(true);
 
   useEffect(() => {
-    setProfileImage(userProfileImage);
-    setUsername(userName);
-    setEmail(userEmail);
-    setPassword(userPassword);
+    fetchData();
   }, []);
+
+  const fetchData = async () => {
+    const user = auth.currentUser;
+
+    const drawingRef = doc(db, "Users", user.uid);
+    const drawingDoc = await getDoc(drawingRef);
+
+    setUsername(drawingDoc.data().Username);
+    setProfileImage(drawingDoc.data().ProfileImage);
+    setEmail(user.email);
+  };
 
   const uploadPhoto = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -50,12 +50,12 @@ export default function EditProfileScreen({ navigation }) {
   };
 
   const update = async () => {
-    await updateProfile(profileImage, username, email, password);
+    await updateProfile(profileImage, username, email);
     navigation.navigate("Profile");
   };
 
-  const showPassword = () => {
-    setPasswordVisible(!passwordVisible);
+  const resetPass = () => {
+    navigation.navigate("ResetPassword", { state: 1 });
   };
 
   return (
@@ -97,24 +97,6 @@ export default function EditProfileScreen({ navigation }) {
                 onChangeText={(text) => setEmail(text)}
                 value={email}
               ></TextInput>
-              <Text style={styles.profileText}>Password</Text>
-              <View
-                style={[styles.textInputContainer, { flexDirection: "row" }]}
-              >
-                <TextInput
-                  style={{ flex: 1 }}
-                  onChangeText={(text) => setPassword(text)}
-                  value={password}
-                  secureTextEntry={passwordVisible}
-                />
-                <Pressable
-                  style={{ marginLeft: 10 }}
-                  onPressIn={showPassword}
-                  onPressOut={showPassword}
-                >
-                  <AntDesign name="eyeo" size={24} color="black" />
-                </Pressable>
-              </View>
             </View>
             <Pressable
               style={({ pressed }) => [
@@ -126,6 +108,17 @@ export default function EditProfileScreen({ navigation }) {
               onPress={update}
             >
               <Text style={styles.updateText}>Update</Text>
+            </Pressable>
+            <Pressable
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? "rgb(210, 230, 255)" : "#DDFFFF",
+                },
+                styles.updateContainer,
+              ]}
+              onPress={resetPass}
+            >
+              <Text style={styles.updateText}>Reset Password</Text>
             </Pressable>
           </View>
         </KeyboardAwareScrollView>

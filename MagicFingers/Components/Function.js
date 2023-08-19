@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Pressable,
-  Image,
-  Modal,
-  Text,
-  Alert,
-} from "react-native";
+import { StyleSheet, View, Pressable, Modal, Text, Alert } from "react-native";
 import { deleteDrawing, favouriteDrawings } from "../BackEnd/Firebase";
 import { AntDesign } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system";
@@ -67,6 +59,8 @@ export default function ProjectFucntion({ isVisible, onClose, projects }) {
     }
   };
 
+  const onShare = async () => {};
+
   return (
     isVisible && (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -117,6 +111,11 @@ export default function ProjectFucntion({ isVisible, onClose, projects }) {
           <View style={styles.functionButton}>
             <Pressable onPress={onSave} style={{ alignItems: "center" }}>
               <AntDesign name="save" size={26} color="blue" />
+            </Pressable>
+          </View>
+          <View style={styles.functionButton}>
+            <Pressable onPress={onShare} style={{ alignItems: "center" }}>
+              <AntDesign name="sharealt" size={26} color="blue" />
             </Pressable>
           </View>
           <View style={styles.functionButton}>

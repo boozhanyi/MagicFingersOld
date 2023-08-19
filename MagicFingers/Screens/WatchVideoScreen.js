@@ -77,6 +77,7 @@ export default function WatchVideoScreen({ navigation, route }) {
             >
               {video.VideoName}
             </Text>
+
             <Pressable onPress={saveVideo}>
               <Entypo
                 style={{ marginRight: 20 }}
@@ -93,6 +94,18 @@ export default function WatchVideoScreen({ navigation, route }) {
                 color="blue"
               />
             </Pressable>
+          </View>
+          <View style={{ width: "100%" }}>
+            <Text
+              style={{
+                fontSize: 15,
+                marginTop: 15,
+                marginLeft: 20,
+                textAlign: "left",
+              }}
+            >
+              {video.Keyword}
+            </Text>
           </View>
           <Pressable
             style={({ pressed }) => [

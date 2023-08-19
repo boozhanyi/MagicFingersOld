@@ -22,8 +22,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateEmail,
-  updatePassword,
   signOut,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -41,26 +41,9 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 const auth = getAuth();
 
-let user;
-let userName;
-let userEmail;
-let userProfileImage;
-let userPassword;
-
 const LogInAccount = async (email, password) => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    user = auth.currentUser;
-    userEmail = user.email;
-
-    const userDocRef = doc(db, "Users", user.uid);
-    const userDocSnapshot = await getDoc(userDocRef);
-
-    if (userDocSnapshot.exists()) {
-      userName = userDocSnapshot.data().Username;
-      userProfileImage = userDocSnapshot.data().ProfileImage;
-      userPassword = userDocSnapshot.data().Password;
-    }
 
     console.log("Successfully logged in");
     return { status: true, error: null };
@@ -84,16 +67,25 @@ const SignUpAccount = async (email, password, username) => {
     await setDoc(usersCollection, {
       Username: username,
       Email: email,
-      Password: password,
+      ProfileImage: user.photoURL,
     });
-
-    const userDocSnapshot = await getDoc(usersCollection);
-    username = userDocSnapshot.data().Username;
-    password = userDocSnapshot.data().Password;
 
     console.log("New user created");
   } catch (error) {
     console.error("Error creating user:", error);
+  }
+};
+
+const resetPassword = async (email) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    Alert.alert(
+      "Password Reset Email Sent",
+      "Check your email for password reset instructions."
+    );
+  } catch (error) {
+    console.log(error);
+    Alert.alert("Password Reset Failed", error.message);
   }
 };
 
@@ -142,15 +134,6 @@ const updateProfile = async (imageUri, newUsername, newEmail, newPassword) => {
       console.log("Error updating email", error);
     }
 
-    try {
-      if (userPassword !== newPassword) {
-        await updatePassword(user, newPassword);
-        userPassword = newPassword;
-      }
-    } catch (error) {
-      console.log("Error updating email", error);
-    }
-
     const downloadUrl = await getDownloadURL(imageRef);
     const userRef = doc(db, "Users", user.uid);
 
@@ -158,13 +141,7 @@ const updateProfile = async (imageUri, newUsername, newEmail, newPassword) => {
       ProfileImage: downloadUrl,
       Username: newUsername,
       Email: newEmail,
-      Password: newPassword,
     });
-
-    const newUserdata = doc(db, "Users", user.uid);
-    const userDoc = await getDoc(newUserdata);
-    userName = userDoc.data().Username;
-    userProfileImage = userDoc.data().ProfileImage;
 
     Alert.alert("Successfully updated!");
     console.log("Successfully updated!");
@@ -362,7 +339,7 @@ const deleteDrawing = async (drawing) => {
         await deleteDoc(doc(documentRef, drawingItem.DrawingId));
       }
 
-      const storageRef = ref(storage, drawingItem.DrawingUrl); // Replace "drawings" with your storage path
+      const storageRef = ref(storage, drawingItem.DrawingUrl);
       await deleteObject(storageRef);
 
       console.log(`Drawing with ID ${drawingItem.DrawingId} deleted.`);
@@ -412,10 +389,6 @@ export {
   storage,
   LogInAccount,
   SignUpAccount,
-  userName,
-  userProfileImage,
-  userEmail,
-  userPassword,
   updateProfile,
   uploadVideo,
   logOut,
@@ -426,4 +399,5 @@ export {
   updateDrawingName,
   deleteDrawing,
   favouriteDrawings,
+  resetPassword,
 };

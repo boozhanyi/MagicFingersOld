@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useSyncExternalStore } from "react";
 import { StyleSheet, Text, View, Pressable, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -16,6 +16,7 @@ export default function VideoScreen({ navigation }) {
   const [historyVideo, setHistoryVideo] = useState([]);
   const [starVideo, setStarVideo] = useState([]);
   const [allVideo, setAllVideo] = useState([]);
+  const [originalVideo, setOriginalVideo] = useState([]);
 
   useEffect(() => {
     fetchVideo();
@@ -112,6 +113,18 @@ export default function VideoScreen({ navigation }) {
     };
   };
 
+  const search = (text) => {
+    setVideoName(text);
+    if (text !== "") {
+      const filtered = video.filter((item) =>
+        item.VideoName.toLowerCase().includes(text.toLowerCase())
+      );
+      setVideo(filtered);
+    } else {
+      setVideo(originalVideo);
+    }
+  };
+
   const selectedVideo = (videoSource) => {
     navigation.navigate("WatchVideoScreen", { video: videoSource });
   };
@@ -121,6 +134,7 @@ export default function VideoScreen({ navigation }) {
     setIsPressedButtonStar(false);
     setIsPressedButtonAll(false);
     setVideo(historyVideo);
+    setOriginalVideo(historyVideo);
   };
 
   const pressedButtonStar = () => {
@@ -128,6 +142,7 @@ export default function VideoScreen({ navigation }) {
     setIsPressedButtonHistory(false);
     setIsPressedButtonStar(true);
     setVideo(starVideo);
+    setOriginalVideo(starVideo);
   };
 
   const pressedButtonAll = () => {
@@ -135,6 +150,7 @@ export default function VideoScreen({ navigation }) {
     setIsPressedButtonHistory(false);
     setIsPressedButtonStar(false);
     setVideo(allVideo);
+    setOriginalVideo(allVideo);
   };
 
   return (
@@ -170,7 +186,7 @@ export default function VideoScreen({ navigation }) {
             <TextInput
               style={styles.videoNameInput}
               placeholder="Search your video name here"
-              onChangeText={(text) => setVideoName(text)}
+              onChangeText={(text) => search(text)}
               value={videoName}
             ></TextInput>
           </View>

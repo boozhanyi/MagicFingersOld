@@ -8,12 +8,15 @@ import {
   StatusBar,
 } from "react-native";
 import React, { useState } from "react";
-import { ImageBackground } from "react-native";
+import { ImageBackground, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { LogInAccount, logInWithGoogle } from "../BackEnd/Firebase";
+import {
+  LogInAccount,
+  logInWithGoogle,
+  resetPassword,
+} from "../BackEnd/Firebase";
 import { AntDesign } from "@expo/vector-icons";
-import { Alert } from "react-native";
 
 const googleImage = require("../assets/Google.png");
 
@@ -35,6 +38,10 @@ export default function LogInScreen({ navigation }) {
 
   const showPassword = () => {
     setPasswordVisible(!passwordVisible);
+  };
+
+  const forgotPassword = () => {
+    navigation.navigate("ResetPassword", { state: 0 });
   };
 
   return (
@@ -72,7 +79,7 @@ export default function LogInScreen({ navigation }) {
               <Pressable
                 style={styles.forgotPasswordContainer}
                 onPress={() => {
-                  console.log("forgot password");
+                  forgotPassword();
                 }}
               >
                 <Text style={styles.forgotPassword}>Forgot Password ?</Text>

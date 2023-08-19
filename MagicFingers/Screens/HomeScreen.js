@@ -17,6 +17,7 @@ import ProjectFucntion from "../Components/Function";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { db, auth } from "../BackEnd/Firebase";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function HomeScreen() {
   const [projectName, setProjectName] = useState("");
@@ -31,6 +32,15 @@ export default function HomeScreen() {
   const [imageProject, setImageProject] = useState([]);
   const [allDrawing, setAllDrawings] = useState([]);
   const [starDrawing, setStarDrawing] = useState([]);
+  const [originalDrawing, setOriginalDrawing] = useState([]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsPressedButtonAll(true);
+      setIsPressedButtonFavourite(false);
+      setImageProject(allDrawing);
+    }, [])
+  );
 
   useEffect(() => {
     fetchAllDrawing();
@@ -64,7 +74,6 @@ export default function HomeScreen() {
           DrawingUrl: data.DrawingUrl,
         });
       });
-
       setAllDrawings(drawings);
     });
 
@@ -88,13 +97,24 @@ export default function HomeScreen() {
           DrawingUrl: data.DrawingUrl,
         });
       });
-
       setStarDrawing(drawings);
     });
 
     return () => {
       unsubscribe(); // Unsubscribe when the cleanup function is called
     };
+  };
+
+  const searchProject = (text) => {
+    setProjectName(text);
+    if (text !== "") {
+      const filtered = imageProject.filter((item) =>
+        item.DrawingName.toLowerCase().includes(text.toLowerCase())
+      );
+      setImageProject(filtered);
+    } else {
+      setImageProject(originalDrawing);
+    }
   };
 
   const onModalAction = (item) => {
@@ -110,6 +130,7 @@ export default function HomeScreen() {
     setIsPressedButtonAll(true);
     setIsPressedButtonFavourite(false);
     setImageProject(allDrawing);
+    setOriginalDrawing(allDrawing);
   };
 
   const pressedButtonFavourite = async () => {
@@ -117,6 +138,7 @@ export default function HomeScreen() {
     setIsPressedButtonAll(false);
     setFunctionVisible(false);
     setImageProject(starDrawing);
+    setOriginalDrawing(starDrawing);
   };
 
   const onFunctionClose = () => {
@@ -170,7 +192,7 @@ export default function HomeScreen() {
               <TextInput
                 style={styles.projectNameInput}
                 placeholder="Enter your project name"
-                onChangeText={(text) => setProjectName(text)}
+                onChangeText={(text) => searchProject(text)}
                 value={projectName}
               ></TextInput>
             </View>

@@ -10,6 +10,7 @@ import EditProfileScreen from "./Screens/EditProfileScreen";
 import UploadVideoScreen from "./Screens/UploadVideoScreen";
 import MoreAbousUsScreen from "./Screens/MoreAbousUsScreen";
 import WatchVideoScreen from "./Screens/WatchVideoScreen";
+import ResetPassword from "./Screens/ResetPasswordScreen";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -65,6 +66,11 @@ export default function App() {
         <Stack.Screen
           name="WatchVideoScreen"
           component={WatchVideoScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ResetPassword"
+          component={ResetPassword}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
