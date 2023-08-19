@@ -6,7 +6,7 @@ import { Video } from "expo-av";
 import { Entypo } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
-import { setStarVideo, setWatchHistory } from "../BackEnd/Firebase";
+import { setStarVideo, setWatchHistory, storage } from "../BackEnd/Firebase";
 
 export default function WatchVideoScreen({ navigation, route }) {
   const video = route.params?.video;
@@ -31,7 +31,6 @@ export default function WatchVideoScreen({ navigation, route }) {
       }
 
       const fileUri = FileSystem.cacheDirectory + video.VideoName + ".mp4";
-      console.log("Downloading!");
       const downloadResumable = FileSystem.createDownloadResumable(
         video.VideoUrl,
         fileUri,
@@ -41,10 +40,8 @@ export default function WatchVideoScreen({ navigation, route }) {
       const { uri } = await downloadResumable.downloadAsync(null, {
         shouldCache: false,
       });
-      console.log(uri);
 
-      const asset = await MediaLibrary.createAssetAsync(uri);
-      await MediaLibrary.createAlbumAsync("MyVideos", asset, false);
+      await MediaLibrary.createAssetAsync(uri);
 
       Alert.alert("Download Complete");
     } catch (error) {
@@ -66,6 +63,7 @@ export default function WatchVideoScreen({ navigation, route }) {
             resizeMode="contain"
             source={{ uri: video.VideoUrl }}
             shouldPlay
+            isLooping
           />
 
           <View style={styles.functionContainer}>

@@ -196,7 +196,7 @@ const uploadVideo = async (videoName, keyword, videoSource) => {
       xhr.send(null);
     });
 
-    const videoRef = ref(storage, `videos/${videoName}`);
+    const videoRef = ref(storage, `videos/${videoName}.mp4`);
     await uploadBytes(videoRef, blob);
     blob.close();
 
@@ -409,6 +409,7 @@ const favouriteDrawings = async (drawing) => {
 export {
   db,
   auth,
+  storage,
   LogInAccount,
   SignUpAccount,
   userName,

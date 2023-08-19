@@ -1,6 +1,17 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Pressable, Image, Modal, Text } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Pressable,
+  Image,
+  Modal,
+  Text,
+  Alert,
+} from "react-native";
 import { deleteDrawing, favouriteDrawings } from "../BackEnd/Firebase";
+import { AntDesign } from "@expo/vector-icons";
+import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
 
 export default function ProjectFucntion({ isVisible, onClose, projects }) {
   const [deleteButton, pressedButtonDelete] = useState(false);
@@ -22,6 +33,38 @@ export default function ProjectFucntion({ isVisible, onClose, projects }) {
 
   const cancelDelete = () => {
     pressedButtonDelete(false);
+    onClose();
+  };
+
+  const onSave = async () => {
+    try {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+
+      if (status !== "granted") {
+        Alert.alert("Permission needed!");
+      }
+
+      projects.forEach(async (item) => {
+        const fileUri =
+          FileSystem.documentDirectory + item.DrawingName + ".png";
+        const downloadResumable = FileSystem.createDownloadResumable(
+          item.DrawingUrl,
+          fileUri,
+          {},
+          false
+        );
+        const { uri } = await downloadResumable.downloadAsync(null, {
+          shouldCache: false,
+        });
+        console.log(uri);
+        await MediaLibrary.createAssetAsync(uri);
+      });
+
+      Alert.alert("Download Complete");
+      onClose();
+    } catch (error) {
+      console.error("Error downloading drawing:", error);
+    }
   };
 
   return (
@@ -63,26 +106,22 @@ export default function ProjectFucntion({ isVisible, onClose, projects }) {
         <View pointerEvents="box-none" style={styles.overlayView}>
           <View style={styles.functionButton}>
             <Pressable onPress={deleteProject} style={{ alignItems: "center" }}>
-              <Image
-                source={require("../assets/Delete.png")}
-                style={{ width: 24, height: 24 }}
-              />
+              <AntDesign name="delete" size={26} color="blue" />
             </Pressable>
           </View>
           <View style={styles.functionButton}>
             <Pressable style={{ alignItems: "center" }} onPress={starProject}>
-              <Image
-                source={require("../assets/Star.png")}
-                style={{ width: 24, height: 24 }}
-              />
+              <AntDesign name="staro" size={26} color="blue" />
+            </Pressable>
+          </View>
+          <View style={styles.functionButton}>
+            <Pressable onPress={onSave} style={{ alignItems: "center" }}>
+              <AntDesign name="save" size={26} color="blue" />
             </Pressable>
           </View>
           <View style={styles.functionButton}>
             <Pressable onPress={onClose} style={{ alignItems: "center" }}>
-              <Image
-                source={require("../assets/Close.png")}
-                style={{ width: 24, height: 24 }}
-              />
+              <AntDesign name="closecircleo" size={26} color="blue" />
             </Pressable>
           </View>
         </View>

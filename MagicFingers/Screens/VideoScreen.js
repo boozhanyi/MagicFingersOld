@@ -91,7 +91,7 @@ export default function VideoScreen({ navigation }) {
 
   const fetchVideo = async () => {
     const videoRef = collection(db, "Video");
-    //const videoQuery = query(videoRef, orderBy("TimeStamp", "desc"));
+    const videoQuery = query(videoRef, orderBy("TimeStamp", "desc"));
 
     const unsubscribe = onSnapshot(videoRef, (snapshot) => {
       const videos = [];
