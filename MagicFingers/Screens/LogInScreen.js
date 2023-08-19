@@ -11,11 +11,7 @@ import React, { useState } from "react";
 import { ImageBackground, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import {
-  LogInAccount,
-  logInWithGoogle,
-  resetPassword,
-} from "../BackEnd/Firebase";
+import { LogInAccount } from "../BackEnd/Firebase";
 import { AntDesign } from "@expo/vector-icons";
 
 const googleImage = require("../assets/Google.png");

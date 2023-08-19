@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -32,13 +32,14 @@ export default function HomeScreen() {
   const [imageProject, setImageProject] = useState([]);
   const [allDrawing, setAllDrawings] = useState([]);
   const [starDrawing, setStarDrawing] = useState([]);
-  const [originalDrawing, setOriginalDrawing] = useState([]);
+  const originalDrawing = useRef([]);
+  const allDrawingRef = useRef([]);
 
   useFocusEffect(
     React.useCallback(() => {
       setIsPressedButtonAll(true);
       setIsPressedButtonFavourite(false);
-      setImageProject(allDrawing);
+      setProjectName("");
     }, [])
   );
 
@@ -50,12 +51,14 @@ export default function HomeScreen() {
   useEffect(() => {
     if (isPressedButtonAll) {
       setImageProject(allDrawing);
+      setProjectName("");
     }
   }, [allDrawing]);
 
   useEffect(() => {
     if (isPressedButtonFavourite) {
       setImageProject(starDrawing);
+      setProjectName("");
     }
   }, [starDrawing]);
 
@@ -75,6 +78,7 @@ export default function HomeScreen() {
         });
       });
       setAllDrawings(drawings);
+      allDrawingRef.current = drawings;
     });
 
     return () => {
@@ -107,13 +111,13 @@ export default function HomeScreen() {
 
   const searchProject = (text) => {
     setProjectName(text);
-    if (text !== "") {
-      const filtered = imageProject.filter((item) =>
+    if (text) {
+      const filtered = originalDrawing.current.filter((item) =>
         item.DrawingName.toLowerCase().includes(text.toLowerCase())
       );
       setImageProject(filtered);
     } else {
-      setImageProject(originalDrawing);
+      setImageProject(originalDrawing.current);
     }
   };
 
@@ -130,7 +134,7 @@ export default function HomeScreen() {
     setIsPressedButtonAll(true);
     setIsPressedButtonFavourite(false);
     setImageProject(allDrawing);
-    setOriginalDrawing(allDrawing);
+    originalDrawing.current = allDrawing;
   };
 
   const pressedButtonFavourite = async () => {
@@ -138,7 +142,7 @@ export default function HomeScreen() {
     setIsPressedButtonAll(false);
     setFunctionVisible(false);
     setImageProject(starDrawing);
-    setOriginalDrawing(starDrawing);
+    originalDrawing.current = starDrawing;
   };
 
   const onFunctionClose = () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useSyncExternalStore } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, View, Pressable, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -10,13 +10,13 @@ import { db, auth } from "../BackEnd/Firebase";
 export default function VideoScreen({ navigation }) {
   const [video, setVideo] = useState([]);
   const [videoName, setVideoName] = useState("");
-  const [isPressedButtonHistory, setIsPressedButtonHistory] = useState(false);
-  const [isPressedButtonStar, setIsPressedButtonStar] = useState(false);
-  const [isPressedButtonAll, setIsPressedButtonAll] = useState(true);
+  const isPressedButtonHistory = useRef(false);
+  const isPressedButtonStar = useRef(false);
+  const isPressedButtonAll = useRef(true);
   const [historyVideo, setHistoryVideo] = useState([]);
   const [starVideo, setStarVideo] = useState([]);
   const [allVideo, setAllVideo] = useState([]);
-  const [originalVideo, setOriginalVideo] = useState([]);
+  const originalVideo = useRef([]);
 
   useEffect(() => {
     fetchVideo();
@@ -25,20 +25,23 @@ export default function VideoScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    if (isPressedButtonAll) {
+    if (isPressedButtonAll.current) {
       setVideo(allVideo);
+      originalVideo.current = allVideo;
     }
   }, [allVideo]);
 
   useEffect(() => {
-    if (isPressedButtonHistory) {
+    if (isPressedButtonHistory.current) {
       setVideo(historyVideo);
+      originalVideo.current = historyVideo;
     }
   }, [historyVideo]);
 
   useEffect(() => {
-    if (isPressedButtonStar) {
+    if (isPressedButtonStar.current) {
       setVideo(starVideo);
+      originalVideo.current = starVideo;
     }
   }, [starVideo]);
 
@@ -94,7 +97,7 @@ export default function VideoScreen({ navigation }) {
     const videoRef = collection(db, "Video");
     const videoQuery = query(videoRef, orderBy("TimeStamp", "desc"));
 
-    const unsubscribe = onSnapshot(videoRef, (snapshot) => {
+    const unsubscribe = onSnapshot(videoQuery, (snapshot) => {
       const videos = [];
       snapshot.forEach((video) => {
         videos.push({
@@ -116,12 +119,13 @@ export default function VideoScreen({ navigation }) {
   const search = (text) => {
     setVideoName(text);
     if (text !== "") {
-      const filtered = video.filter((item) =>
+      console.log(video);
+      const filtered = originalVideo.current.filter((item) =>
         item.VideoName.toLowerCase().includes(text.toLowerCase())
       );
       setVideo(filtered);
     } else {
-      setVideo(originalVideo);
+      setVideo(originalVideo.current);
     }
   };
 
@@ -130,27 +134,27 @@ export default function VideoScreen({ navigation }) {
   };
 
   const pressedButtonHistory = () => {
-    setIsPressedButtonHistory(true);
-    setIsPressedButtonStar(false);
-    setIsPressedButtonAll(false);
+    isPressedButtonHistory.current = true;
+    isPressedButtonAll.current = false;
+    isPressedButtonStar.current = false;
     setVideo(historyVideo);
-    setOriginalVideo(historyVideo);
+    originalVideo.current = historyVideo;
   };
 
   const pressedButtonStar = () => {
-    setIsPressedButtonAll(false);
-    setIsPressedButtonHistory(false);
-    setIsPressedButtonStar(true);
+    isPressedButtonAll.current = false;
+    isPressedButtonHistory.current = false;
+    isPressedButtonStar.current = true;
     setVideo(starVideo);
-    setOriginalVideo(starVideo);
+    originalVideo.current = starVideo;
   };
 
   const pressedButtonAll = () => {
-    setIsPressedButtonAll(true);
-    setIsPressedButtonHistory(false);
-    setIsPressedButtonStar(false);
+    isPressedButtonAll.current = true;
+    isPressedButtonHistory.current = false;
+    isPressedButtonStar.current = false;
     setVideo(allVideo);
-    setOriginalVideo(allVideo);
+    originalVideo.current = allVideo;
   };
 
   return (
@@ -195,7 +199,7 @@ export default function VideoScreen({ navigation }) {
               style={[
                 styles.filterButton,
                 {
-                  backgroundColor: isPressedButtonAll
+                  backgroundColor: isPressedButtonAll.current
                     ? "rgb(210, 230, 255)"
                     : "#DDFFFF",
                 },
@@ -208,7 +212,7 @@ export default function VideoScreen({ navigation }) {
               style={[
                 styles.filterButton,
                 {
-                  backgroundColor: isPressedButtonHistory
+                  backgroundColor: isPressedButtonHistory.current
                     ? "rgb(210, 230, 255)"
                     : "#DDFFFF",
                 },
@@ -221,7 +225,7 @@ export default function VideoScreen({ navigation }) {
               style={[
                 styles.filterButton,
                 {
-                  backgroundColor: isPressedButtonStar
+                  backgroundColor: isPressedButtonStar.current
                     ? "rgb(210, 230, 255)"
                     : "#DDFFFF",
                 },

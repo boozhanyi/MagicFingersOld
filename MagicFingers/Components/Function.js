@@ -14,13 +14,13 @@ export default function ProjectFucntion({ isVisible, onClose, projects }) {
 
   const confirmDelete = async () => {
     pressedButtonDelete(false);
-    await deleteDrawing(projects);
     onClose();
+    await deleteDrawing(projects);
   };
 
   const starProject = async () => {
-    await favouriteDrawings(projects);
     onClose();
+    await favouriteDrawings(projects);
   };
 
   const cancelDelete = () => {
