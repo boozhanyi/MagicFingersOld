@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
   },
   setNameContainer: {
     flex: 1,
-    padding: 50,
+    padding: 40,
     backgroundColor: "#F0FDFF",
     borderRadius: 30,
     alignItems: "center",

@@ -56,6 +56,13 @@ export default function HomeScreen() {
   }, [allDrawing]);
 
   useEffect(() => {
+    if (isPressedButtonAll) {
+      setImageProject(allDrawing);
+      originalDrawing.current = allDrawing;
+    }
+  }, [isPressedButtonAll]);
+
+  useEffect(() => {
     if (isPressedButtonFavourite) {
       setImageProject(starDrawing);
       setProjectName("");
