@@ -129,10 +129,6 @@ export default function EditProfileScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-  },
   inner: {
     flex: 1,
     justifyContent: "center",
@@ -140,12 +136,12 @@ const styles = StyleSheet.create({
   },
   profileImageContainer: {
     overflow: "hidden",
-    borderRadius: 75,
+    borderRadius: 50,
     borderWidth: 2,
   },
   profileImage: {
-    width: 150,
-    height: 150,
+    width: 100,
+    height: 100,
   },
   uploadPhotoContainer: {
     flexDirection: "row",

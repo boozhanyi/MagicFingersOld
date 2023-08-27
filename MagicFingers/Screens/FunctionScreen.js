@@ -15,6 +15,7 @@ import * as ImagePicker from "expo-image-picker";
 import { db, auth } from "../BackEnd/Firebase";
 import { onSnapshot, doc } from "firebase/firestore";
 import { useFocusEffect } from "@react-navigation/native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function FunctionScreen({ navigation }) {
   const [profileImage, setProfileImage] = useState(null);
@@ -90,103 +91,119 @@ export default function FunctionScreen({ navigation }) {
       source={require("../assets/Background.png")}
       style={{ flex: 1 }}
     >
-      <SafeAreaView
-        style={[styles.container, { opacity: setNameModalVisible ? 0.1 : 1 }]}
-      >
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>EXPLORE</Text>
-          <View style={styles.flexSpacer} />
-          <Pressable
-            style={styles.profileImageContainer}
-            onPress={onPressProfile}
-          >
-            <Image source={{ uri: profileImage }} style={styles.profileImage} />
-          </Pressable>
-        </View>
-        <View style={styles.mainContainer}>
-          <Pressable
-            style={({ pressed }) => [
-              {
-                backgroundColor: pressed ? "rgb(210, 230, 255)" : "#DDFFFF",
-              },
-              styles.subContainer,
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <View
+            style={[
+              styles.container,
+              { opacity: setNameModalVisible ? 0.1 : 1 },
             ]}
-            onPress={onOpenDesign}
           >
-            <Text style={styles.mainText}>Start Your Design</Text>
-            <Text style={styles.subText}>Various tools to help you</Text>
-          </Pressable>
-          <Pressable
-            style={({ pressed }) => [
-              {
-                backgroundColor: pressed ? "rgb(210, 230, 255)" : "#DDFFFF",
-              },
-              styles.subContainer,
-            ]}
-            onPress={onOpenVideo}
-          >
-            <Text style={styles.mainText}>Video</Text>
-            <Text style={styles.subText}>
-              Step-by-step drawing instructions for kids of all ages. Large
-              collection of drawing tutorials featuring various topics .
-            </Text>
-          </Pressable>
-          <Pressable
-            style={({ pressed }) => [
-              {
-                backgroundColor: pressed ? "rgb(210, 230, 255)" : "#DDFFFF",
-              },
-              styles.subContainer,
-            ]}
-            onPress={onOpenImportPicture}
-          >
-            <Text style={styles.mainText}>Import and edit your picture</Text>
-            <Text style={styles.subText}>
-              Import your picture and you can edit on it now
-            </Text>
-          </Pressable>
-        </View>
-        {setNameModalVisible && (
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={setNameModalVisible}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.setNameContainer}>
-                <Text>Give Your Project a Name</Text>
-                <TextInput
-                  style={styles.nameInput}
-                  placeholder="Your project name"
-                  onChangeText={(text) => setProjectName(text)}
-                  value={projectName}
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>EXPLORE</Text>
+              <View style={styles.flexSpacer} />
+              <Pressable
+                style={styles.profileImageContainer}
+                onPress={onPressProfile}
+              >
+                <Image
+                  source={{ uri: profileImage }}
+                  style={styles.profileImage}
                 />
-                <Pressable
-                  style={({ pressed }) => [
-                    {
-                      backgroundColor: pressed ? "rgb(210, 230, 255)" : "black",
-                    },
-                    styles.confirmButton,
-                  ]}
-                  onPress={confirmName}
-                >
-                  <Text style={{ color: "white" }}>Confirm</Text>
-                </Pressable>
-                <Pressable
-                  style={({ pressed }) => [
-                    {
-                      backgroundColor: pressed ? "rgb(210, 230, 255)" : "black",
-                    },
-                    styles.confirmButton,
-                  ]}
-                  onPress={cancel}
-                >
-                  <Text style={{ color: "white" }}>Cancel</Text>
-                </Pressable>
-              </View>
+              </Pressable>
             </View>
-          </Modal>
-        )}
+            <View style={styles.mainContainer}>
+              <Pressable
+                style={({ pressed }) => [
+                  {
+                    backgroundColor: pressed ? "rgb(210, 230, 255)" : "#DDFFFF",
+                  },
+                  styles.subContainer,
+                ]}
+                onPress={onOpenDesign}
+              >
+                <Text style={styles.mainText}>Start Your Design</Text>
+                <Text style={styles.subText}>Various tools to help you</Text>
+              </Pressable>
+              <Pressable
+                style={({ pressed }) => [
+                  {
+                    backgroundColor: pressed ? "rgb(210, 230, 255)" : "#DDFFFF",
+                  },
+                  styles.subContainer,
+                ]}
+                onPress={onOpenVideo}
+              >
+                <Text style={styles.mainText}>Video</Text>
+                <Text style={styles.subText}>
+                  Step-by-step drawing instructions for kids of all ages. Large
+                  collection of drawing tutorials featuring various topics .
+                </Text>
+              </Pressable>
+              <Pressable
+                style={({ pressed }) => [
+                  {
+                    backgroundColor: pressed ? "rgb(210, 230, 255)" : "#DDFFFF",
+                  },
+                  styles.subContainer,
+                ]}
+                onPress={onOpenImportPicture}
+              >
+                <Text style={styles.mainText}>
+                  Import and edit your picture
+                </Text>
+                <Text style={styles.subText}>
+                  Import your picture and you can edit on it now
+                </Text>
+              </Pressable>
+            </View>
+            {setNameModalVisible && (
+              <Modal
+                animationType="fade"
+                transparent={true}
+                visible={setNameModalVisible}
+              >
+                <View style={styles.centeredView}>
+                  <View style={styles.setNameContainer}>
+                    <Text>Give Your Project a Name</Text>
+                    <TextInput
+                      style={styles.nameInput}
+                      placeholder="Your project name"
+                      onChangeText={(text) => setProjectName(text)}
+                      value={projectName}
+                    />
+                    <Pressable
+                      style={({ pressed }) => [
+                        {
+                          backgroundColor: pressed
+                            ? "rgb(210, 230, 255)"
+                            : "black",
+                        },
+                        styles.confirmButton,
+                      ]}
+                      onPress={confirmName}
+                    >
+                      <Text style={{ color: "white" }}>Confirm</Text>
+                    </Pressable>
+                    <Pressable
+                      style={({ pressed }) => [
+                        {
+                          backgroundColor: pressed
+                            ? "rgb(210, 230, 255)"
+                            : "black",
+                        },
+                        styles.confirmButton,
+                      ]}
+                      onPress={cancel}
+                    >
+                      <Text style={{ color: "white" }}>Cancel</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              </Modal>
+            )}
+          </View>
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     </ImageBackground>
   );
@@ -196,9 +213,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
   },
   titleContainer: {
-    marginTop: 80,
     flexDirection: "row",
     alignItems: "center",
   },

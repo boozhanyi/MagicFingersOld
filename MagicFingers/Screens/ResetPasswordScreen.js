@@ -64,17 +64,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
   },
   header: {
     fontSize: 36,
     fontWeight: "bold",
-    marginTop: 80,
   },
   inputContainer: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 100,
     width: "100%",
+    marginTop: 50,
   },
   input: {
     height: 50,
